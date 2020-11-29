@@ -15,18 +15,21 @@ class FileReadOnlyError(Exception):
 
 
 class MemFile(object):
-    def __init__(self, fnam, mode="r+b"):
+    def __init__(self, fnam=None, mode="r"):
 
         self._fnam = fnam
         self._mode = mode
         self._open = False
 
+        self._set_mode()
+
+        self._create_stream()
+
+    def _set_mode(self):
         self._is_readonly = self._chk_readonly()
         self._is_binary = "b" in self._mode
         self._is_overwrite = "w" in self._mode
         self._is_append = "a" in self._mode
-
-        self._create_stream()
 
     def __repr__(self):
         return (
@@ -55,11 +58,18 @@ class MemFile(object):
             return False
         return True
 
-    def open(self):
+    def open(self, fnam=None, mode=None):
+
         if self._open:
             raise FileAlreadyOpenError()
 
         self._open = True
+
+        if fnam:
+            self._fnam = fnam
+        if mode:
+            self._mode = mode
+            self._set_mode()
 
         if self._is_overwrite:
             self._create_stream()
@@ -97,7 +107,7 @@ class MemFile(object):
         return self._b
 
     def __enter__(self):
-        self.open()
+        return self
 
     def __exit__(self, t, v, tb):
         self.close()

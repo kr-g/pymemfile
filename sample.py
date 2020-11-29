@@ -1,9 +1,9 @@
 from pymemfile import MemFile
 
-mf = MemFile("test.file", "r+")
-print(mf)
+file = MemFile("test.file", "r+")
+print(file)
 
-with mf:
+with file.open() as mf:
 
     mf.write("hello ")
     mf.write("world\n")

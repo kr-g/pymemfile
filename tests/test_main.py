@@ -41,8 +41,8 @@ class MemFile_TestCase(unittest.TestCase):
 
         test_data = "hello\tworld!\n"
 
-        mf = MemFile("test.file", "r+")
-        with mf:
+        file = MemFile("test.file", "r+")
+        with file.open() as mf:
             mf.write(test_data)
 
         self.assertRaises(FileNotOpenError, mf.write, test_data)
@@ -51,8 +51,8 @@ class MemFile_TestCase(unittest.TestCase):
 
         test_data = "hello\tworld!\n"
 
-        mf = MemFile("test.file", "r+")
-        with mf:
+        file = MemFile("test.file", "r+")
+        with file.open() as mf:
             mf.write(test_data)
             mf.seek(0)
             cnt = mf.read()
@@ -65,12 +65,12 @@ class MemFile_TestCase(unittest.TestCase):
 
         test_data = "hello\tworld!\n"
 
-        mf = MemFile("test.file", "r+a")
+        file = MemFile("test.file", "r+a")
 
-        with mf:
+        with file.open() as mf:
             mf.write(test_data)
 
-        with mf:
+        with file.open() as mf:
             pos = mf.tell()
             self.assertEqual(pos, len(test_data))
 
@@ -78,13 +78,35 @@ class MemFile_TestCase(unittest.TestCase):
 
         test_data = "hello\tworld!\n"
 
-        mf = MemFile("test.file", "w")
+        file = MemFile("test.file", "w")
 
-        with mf:
+        with file.open() as mf:
             mf.write(test_data)
             pos = mf.tell()
             self.assertEqual(pos, len(test_data))
 
-        with mf:
+        with file.open() as mf:
             pos = mf.tell()
             self.assertEqual(pos, 0)
+
+    def test_open_parameter(self):
+
+        test_data = "hello\tworld!\n"
+
+        file = MemFile()
+
+        with file.open("test.file", "w") as mf:
+            mf.write(test_data)
+            pos = mf.tell()
+            self.assertEqual(pos, len(test_data))
+
+    def test_open_parameter_in_place(self):
+
+        test_data = "hello\tworld!\n"
+
+        with MemFile().open("test.file", "w") as mf:
+            mf.write(test_data)
+            pos = mf.tell()
+            self.assertEqual(pos, len(test_data))
+
+        self.assertFalse(mf._open)
