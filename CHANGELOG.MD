@@ -2,7 +2,7 @@
 # Changelog
 
 
-## next release v0.0.2
+## release v0.0.2
 
 - open function with parameters
 - changed open behaviour slightly since call open in `with` context
